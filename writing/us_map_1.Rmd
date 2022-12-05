@@ -24,8 +24,7 @@ library(scales)
 altfuel <- read_csv("../data/Alternative_Fueling_Stations.csv")  
 head(altfuel)
 
-usmap <- states(cb=TRUE) 
-usmap
+usmap <- states(cb=TRUE)
 
   
 ```
