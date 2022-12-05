@@ -30,7 +30,7 @@ fuelmap <-
   geom_sf(data=usmap) +
   geom_point(data=altfuel, aes(X, Y, col=fuel_type_code)) +
   theme_few()
-fuelmap
+fuelmap 
   
 ```
 
