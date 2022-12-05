@@ -5,8 +5,21 @@ date: "2022-12-05"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+
+year by concentration of how many fueling stations per fuel type
+
+time series
+```{r}
+library(tidyverse)
+library(dygraphs)
+altfuel <- read_csv("../data/Alternative_Fueling_Stations.csv") 
+class("open_date", data = altfuel)
+
+altfuel_timeseries <- cbind(mdeaths, fdeaths)
+dygraph(lungDeaths) %>%
+  dySeries("mdeaths", label = "Male") %>%
+  dySeries("fdeaths", label = "Female")
 ```
 
 ## R Markdown
