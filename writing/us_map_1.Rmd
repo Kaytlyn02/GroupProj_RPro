@@ -24,7 +24,13 @@ library(scales)
 altfuel <- read_csv("../data/Alternative_Fueling_Stations.csv")  
 
 usmap <- states(cb=TRUE)  
-
+head(altfuel)
+fuelmap <- 
+  ggplot() +
+  geom_sf(data=usmap) +
+  geom_point(data=altfuel, aes(X, Y, col=fuel_type_code)) +
+  theme_few()
+fuelmap
   
 ```
 
