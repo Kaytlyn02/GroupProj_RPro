@@ -10,10 +10,15 @@ output:
 library(flexdashboard)
 ```
 
+#Introduction 
+
+Our data is the Alternative Fueling Stations data from the US Department of Transportation. This data has been compiled for users to analyze the distribution and other characteristics of various types of fueling stations across the United States. Understanding distributions and patterns within this data may give some indication of the popularity of certain fuel types and trends in industrial usage of each type over time. 
+
+
 Column {data-width=650}
 -----------------------------------------------------------------------
 
-### Chart A
+### Chart A - Distribution of Fueling Stations Across the United States 
 
 ```{r}
 
@@ -22,13 +27,13 @@ Column {data-width=650}
 Column {data-width=350}
 -----------------------------------------------------------------------
 
-### Chart B
+### Chart B - Station Openings by Fuel Type, Time Series Map 
 
 ```{r}
 
 ```
 
-### Chart C
+### Chart C - Industrial uses of Fueling Facilities by Fuel Types, Mosaic Plot
 
 ```{r}
 
