@@ -12,8 +12,9 @@ year by concentration of how many fueling stations per fuel type
 time series
 ```{r}
 library(tidyverse)
+library(readr)
 library(dygraphs)
-altfuel <- read_csv("../data/Alternative_Fueling_Stations.csv") 
+altfuel <- read_csv("data/Alternative_Fueling_Stations.csv") 
 class("open_date", data = altfuel)
 
 altfuel_timeseries <- cbind(mdeaths, fdeaths)
