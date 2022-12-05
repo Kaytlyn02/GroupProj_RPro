@@ -22,9 +22,8 @@ library(ggthemes)
 library(scales)  
 
 altfuel <- read_csv("../data/Alternative_Fueling_Stations.csv")  
-head(altfuel)
 
-usmap <- states(cb=TRUE)
+usmap <- states(cb=TRUE)  
 
   
 ```
