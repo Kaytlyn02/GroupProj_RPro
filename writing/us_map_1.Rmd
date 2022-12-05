@@ -1,0 +1,32 @@
+---
+title: "US Map 1"
+author: "Kelly DeBie"
+date: "2022-12-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+
+library(tidyverse)  
+library(readr)
+library(tigris)  
+library(plotly)  
+library(maps)  
+library(ggplot2)  
+library(ggthemes)  
+library(scales)  
+
+altfuel <- read_csv("../data/Alternative_Fueling_Stations.csv")  
+head(altfuel)
+
+usmap <- states(cb=TRUE) 
+usmap
+
+  
+```
+
