@@ -9,8 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
-
+```{r fig.height=10, fig.width=10}
 
 library(tidyverse)  
 library(readr)
@@ -19,18 +18,44 @@ library(plotly)
 library(maps)  
 library(ggplot2)  
 library(ggthemes)  
+library(maptools)
 library(scales)  
+library(cowplot)
+library(googleway) 
+library(ggrepel)
+library(ggspatial)
+library(rnaturalearth) 
+library(rnaturalearthdata) 
+library(sf)
+library(forcats)
 
 altfuel <- read_csv("../data/Alternative_Fueling_Stations.csv")  
 
-usmap <- states(cb=TRUE)  
-head(altfuel)
-fuelmap <- 
-  ggplot() +
-  geom_sf(data=usmap) +
-  geom_point(data=altfuel, aes(X, Y, col=fuel_type_code)) +
-  theme_few()
-fuelmap 
-   
+altfuel <- altfuel %>%
+  mutate(fuel_type_code=fct_recode(.f = fuel_type_code,
+                                   "Biodiesel"= "BD",
+                                   "Compressed Natural Gas" = "CNG",
+                                   "Electric" = "ELEC",
+                                   "Ethanol" = "E85",
+                                   "Hydrogen" = "HY",
+                                   "Liquefied Natural Gas"= "LNG",
+                                   "Propane" = "LPG"))
+
+world <- ne_countries(scale = "medium", returnclass = "sf")   
+states <- st_as_sf(map("state", plot = FALSE, fill = TRUE))  
+
+
+fuelmap <- ggplot(data = world) +
+    geom_sf() +
+    geom_sf(data = states, fill = NA) +
+    geom_point(data = altfuel, aes(x = X, y = Y, col=fuel_type_code), size = 0.8) +
+    coord_sf(xlim = c(-130, -65), ylim = c(23, 52), expand = FALSE) + 
+    labs(title= "Alternative Fuel Stations in the United States", subtitle= "Contiguous 48", 
+         x=element_blank(), y=element_blank()) + 
+    guides(colour = guide_legend(override.aes = list(size=5))) +
+    scale_color_discrete("Fuel Type") +
+    theme_few()
+fuelmap  
+
 ```
 
