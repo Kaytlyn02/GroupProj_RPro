@@ -8,6 +8,9 @@ output:
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
+library(dplyr)
+
+altfuel <- Alternative_Fueling_Stations
 ```
 
 #Introduction 
