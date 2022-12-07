@@ -1,0 +1,34 @@
+---
+title: "GroupProj_RMarkDown"
+author: "Madison Russell"
+date: "2022-12-05"
+output: html_document
+---
+
+
+
+year by concentration of how many fueling stations per fuel type
+
+time series
+```{r}
+library(tidyverse)
+library(readr)
+library(dygraphs)
+library(lubridate)
+altfuel <- read_csv("data/Alternative_Fueling_Stations.csv") 
+class("open_date")
+altfuel$open_date <- as.POSIXct(altfuel$open_date, 
+format = "%Y/%m/%d %H:%M:%S") 
+altfuel$open_date <- format(altfuel$open_date, format="%Y")
+
+openyear_fueltype <- altfuel %>% 
+  select("open_date", "fuel_type_code")
+
+
+
+dygraph(altfuel) %>%
+  dySeries("open_date", label = "Open Date") %>%
+  dySeries("fuel_type_code", label = "Fuel Type") 
+```
+
+
