@@ -21,7 +21,7 @@ library(ggplot2)
 library(ggthemes)  
 library(scales)  
 
-altfuel <- read_csv("../data/Alternative_Fueling_Stations.csv")  
+altfuel <- read_csv("data/Alternative_Fueling_Stations.csv") 
 
 usmap <- states(cb=TRUE)  
 head(altfuel)

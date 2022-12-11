@@ -20,7 +20,7 @@ library(xts)
 library(lubridate)
 library(dplyr)
 library(ggplot2)
-altfuel <- read_csv("data/Alternative_Fueling_Stations.csv") 
+altfuel <- read_csv("../data/Alternative_Fueling_Stations.csv") 
 alt_fuel <- altfuel %>% 
   filter(!is.na(fuel_type_code)) %>% 
   filter(!is.na(open_date))
