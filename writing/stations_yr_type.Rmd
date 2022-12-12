@@ -20,7 +20,9 @@ library(xts)
 library(lubridate)
 library(dplyr)
 library(ggplot2)
-altfuel <- read_csv("../data/Alternative_Fueling_Stations.csv") 
+library(plotly)
+library(gapminder)
+altfuel <- read_csv("data/Alternative_Fueling_Stations.csv") 
 alt_fuel <- altfuel %>% 
   filter(!is.na(fuel_type_code)) %>% 
   filter(!is.na(open_date))
@@ -69,28 +71,29 @@ lpg_total <- alt_fuel %>%
   group_by(open_date, fuel_type_code) %>% 
   count() 
 
-fig1 <- plot_ly(lpg_total, type = 'scatter', mode = 'lines', fill = 'tonexty')%>%
-  add_trace(x = ~open_date, y = ~n, name = 'LPG')
+fig1 <- plot_ly(lpg_total, type = 'scatter', mode = 'none', fill = 'tonexty', fillcolor = 'rgba(176,224,230, .5)')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'LPG', fillcolor = 'rgba(176,224,230, .5)')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = ""), yaxis = list(range = c(0,600), title = 'Total Stations'))
+fig1
+fig2 <- plot_ly(bd_total, type = 'scatter', mode = 'none', fill = 'tonexty')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'BD', fillcolor = 'rgba(25,25,112, .5)')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = ""), yaxis = list(range = c(0,600), title = ""))
+fig3 <- plot_ly(cng_total, type = 'scatter', mode = 'none', fill = 'tonexty', fillcolor = 'rgba(0, 0, 255, 0.74)')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'CNG', fillcolor = 'rgba(0, 0, 255, 0.74)')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = ""), yaxis = list(range = c(0,200), title = ""))
+fig4 <- plot_ly(HY_total, type = 'scatter', mode = 'none', fill = 'tonexty') %>%
+  add_trace(x = ~open_date, y = ~n, name = 'HY', fillcolor = 'rgba(102,205,170, .5)')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = ""), yaxis = list(range = c(0,25), title = 'Total Stations'))
+fig5 <- plot_ly(LNG_total, type = 'scatter', mode = 'none', fill = 'tonexty')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'LNG', fillcolor = '	rgba(221,160,221, .5)')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = 'Year Opened'), yaxis = list(range = c(0,25), title = ""))
+fig6 <- plot_ly(elec_total, type = 'scatter', mode = 'none', fill = 'tonexty')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'ELEC', fill = 'tonexty', fillcolor = 'rgba(83, 2, 151, 0.74)')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = 'Year Opened'), yaxis = list(title = ""))
+fig7 <- plot_ly(e85_total, type = 'scatter', mode = 'none', fill = 'tonexty')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'E85', fillcolor = 'rgba(30,144,255, .5)')%>%
+  layout(legend=list(title=list(text='Fuel Type')), xaxis = list(title = 'Year Opened'), yaxis = list(range = c(0,500), title = 'Total Stations'))
 
-fig2 <- plot_ly(bd_total, type = 'scatter', mode = 'lines', fill = 'tonexty')%>%
-  add_trace(x = ~open_date, y = ~n, name = 'BD')
-
-fig3 <- plot_ly(cng_total, type = 'scatter', mode = 'lines', fill = 'tonexty')%>%
-  add_trace(x = ~open_date, y = ~n, name = 'CNG')
-
-fig4 <- plot_ly(HY_total, type = 'scatter', mode = 'lines', fill = 'tonexty')%>%
-  add_trace(x = ~open_date, y = ~n, name = 'HY')
-
-fig5 <- plot_ly(LNG_total, type = 'scatter', mode = 'lines', fill = 'tonexty')%>%
-  add_trace(x = ~open_date, y = ~n, name = 'LNG')
-
-fig6 <- plot_ly(elec_total, type = 'scatter', mode = 'lines', fill = 'tonexty')%>%
-  add_trace(x = ~open_date, y = ~n, name = 'ELEC')
-
-fig7 <- plot_ly(e85_total, type = 'scatter', mode = 'lines', fill = 'tonexty')%>%
-  add_trace(x = ~open_date, y = ~n, name = 'E85')
-
-fig_total <- subplot(fig1, fig2, fig3, fig4, fig5, fig6, fig7,
-               nrows = 4, titleY = TRUE, titleX = TRUE)
-
+fig_total <- subplot(fig1, fig2, fig3, fig4, fig5, fig6, fig7, nrows = 3, titleX = TRUE, titleY =TRUE)
+fig_total
 ```
