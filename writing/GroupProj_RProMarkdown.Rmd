@@ -1,0 +1,99 @@
+---
+title: "GroupProj_RMarkDown"
+author: "Madison Russell"
+date: "2022-12-05"
+output:
+  html_document: default
+  word_document: default
+---
+
+
+
+```{r}
+library(tidyquant)
+library(plotly)
+library(tidyverse)
+library(readr)
+library(dygraphs)
+library(lubridate)
+library(xts)
+library(lubridate)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(gapminder)
+altfuel <- read_csv("data/Alternative_Fueling_Stations.csv") 
+alt_fuel <- altfuel %>% 
+  filter(!is.na(fuel_type_code)) %>% 
+  filter(!is.na(open_date))
+alt_fuel$open_date <- as.Date(alt_fuel$open_date, "%Y/%m/%d %H:%M:%S")
+class(alt_fuel$open_date)
+min(alt_fuel$open_date)
+max(alt_fuel$open_date)
+
+alt_fuel %>% 
+  group_by(fuel_type_code) %>% 
+  count()
+
+cng_total <- alt_fuel %>% 
+  mutate(open_date = year(open_date)) %>% 
+  filter(fuel_type_code == "CNG") %>% 
+  group_by(open_date, fuel_type_code) %>% 
+  count() 
+bd_total <- alt_fuel %>% 
+  mutate(open_date = year(open_date)) %>% 
+  filter(fuel_type_code == "BD") %>% 
+  group_by(open_date, fuel_type_code) %>% 
+  count() 
+e85_total <- alt_fuel %>% 
+  mutate(open_date = year(open_date)) %>% 
+  filter(fuel_type_code == "E85") %>% 
+  group_by(open_date, fuel_type_code) %>% 
+  count() 
+elec_total <- alt_fuel %>% 
+  mutate(open_date = year(open_date)) %>% 
+  filter(fuel_type_code == "ELEC") %>% 
+  group_by(open_date, fuel_type_code) %>% 
+  count() 
+HY_total <- alt_fuel %>% 
+  mutate(open_date = year(open_date)) %>% 
+  filter(fuel_type_code == "HY") %>% 
+  group_by(open_date, fuel_type_code) %>% 
+  count() 
+LNG_total <- alt_fuel %>% 
+  mutate(open_date = year(open_date)) %>% 
+  filter(fuel_type_code == "LNG") %>% 
+  group_by(open_date, fuel_type_code) %>% 
+  count() 
+lpg_total <- alt_fuel %>% 
+  mutate(open_date = year(open_date)) %>% 
+  filter(fuel_type_code == "LPG") %>% 
+  group_by(open_date, fuel_type_code) %>% 
+  count() 
+
+fig1 <- plot_ly(lpg_total, type = 'scatter', mode = 'lines', fill = 'tonexty')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'LPG')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = ""), yaxis = list(range = c(0,600), title = 'Total Stations'))
+fig2 <- plot_ly(bd_total, type = 'scatter', mode = 'lines', fill = 'tonexty')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'BD')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = ""), yaxis = list(range = c(0,600), title = ""))
+fig3 <- plot_ly(cng_total, type = 'scatter', mode = 'lines', fill = 'tonexty')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'CNG')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = ""), yaxis = list(range = c(0,200), title = ""))
+fig4 <- plot_ly(HY_total, type = 'scatter', mode = 'lines', fill = 'tonexty') %>%
+  add_trace(x = ~open_date, y = ~n, name = 'HY')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = ""), yaxis = list(range = c(0,25), title = 'Total Stations'))
+fig5 <- plot_ly(LNG_total, type = 'scatter', mode = 'lines', fill = 'tonexty')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'LNG')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = 'Year Opened'), yaxis = list(range = c(0,25), title = ""))
+fig6 <- plot_ly(elec_total, type = 'scatter', mode = 'lines', fill = 'tonexty')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'ELEC')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = 'Year Opened'), yaxis = list(title = ""))
+fig7 <- plot_ly(e85_total, type = 'scatter', mode = 'lines', fill = 'tonexty')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'E85')%>%
+  layout(legend=list(title=list(text='Fuel Type')), xaxis = list(title = 'Year Opened'), yaxis = list(range = c(0,500), title = 'Total Stations'))
+
+fig_total
+fig_total <- subplot(fig1, fig2, fig3, fig4, fig5, fig6, fig7, nrows = 3, titleX = TRUE, titleY =TRUE)
+
+```
