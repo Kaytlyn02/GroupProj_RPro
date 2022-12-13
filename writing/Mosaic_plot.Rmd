@@ -41,11 +41,13 @@ You can also embed plots, for example:
 ```{r pressure, echo=FALSE}
 
 mosaic_fueltype <- ggplot(data = altfuel_larger) +
-  geom_mosaic(aes(x = product(fuel_type_code, facil_group), fill = fuel_type_code)) +   
-  labs(y="Fuel Types Used", x="Facility Type", title = "Mosaic Plot of Fuel Type by Facility Type") +
+  geom_mosaic(aes(x = product(fuel_type_code, facil_group), fill = fuel_type_code, color = fuel_type_code)) +  
+  scale_color_gradientn(colors = wes_palette("Zissou1", type = "discrete")) +
+  labs(y="Fuel Types Used", x="Facility Type", title = "Mosaic Plot of Fuel Type Usage by Facility Type") +
   scale_y_discrete(guide=guide_axis(n.dodge=3))
+ 
 
-mosaic_fueltype + theme(axis.text.x = element_text(angle = 90)) + theme(
+mosaic_fueltype + theme(axis.text.x = element_text(size = 7, angle = 90)) + theme(
   axis.text.y = element_text(size = 6, angle = 45, hjust = 1)
   )
 ```

@@ -9,8 +9,21 @@ output:
 ```{r setup, include=FALSE}
 library(flexdashboard)
 library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(ggmosaic)
+library(wesanderson)
 
-altfuel <- Alternative_Fueling_Stations
+
+
+setwd(("C:/Users/12147/Dropbox/PC/Documents/RPrograming_Anderson/GroupProj_RPro"))
+
+altfuel <- read_csv("data/Alternative_Fueling_Stations.csv") 
+
+combine_fueltype <- read_csv("data/COMBINE_RPRO.csv")
+
+fuel_type_total <- altfuel$facility_type 
+
 ```
 
 #Introduction 
@@ -18,27 +31,42 @@ altfuel <- Alternative_Fueling_Stations
 Our data is the Alternative Fueling Stations data from the US Department of Transportation. This data has been compiled for users to analyze the distribution and other characteristics of various types of fueling stations across the United States. Understanding distributions and patterns within this data may give some indication of the popularity of certain fuel types and trends in industrial usage of each type over time. 
 
 
-Column {data-width=650}
+Column {data-width=500}
 -----------------------------------------------------------------------
 
 ### Chart A - Distribution of Fueling Stations Across the United States 
 
 ```{r}
 
+
 ```
 
-Column {data-width=350}
+Column {data-width=500}
 -----------------------------------------------------------------------
 
 ### Chart B - Station Openings by Fuel Type, Time Series Map 
 
 ```{r}
 
+
+
 ```
 
 ### Chart C - Industrial uses of Fueling Facilities by Fuel Types, Mosaic Plot
 
-```{r}
+```{r,  fig.width = 14, fig.height=6}
+altfuel_larger <- left_join(altfuel, combine_fueltype, by = "facility_type")
+
+mosaic_fueltype <- ggplot(data = altfuel_larger) +
+  geom_mosaic(aes(x = product(fuel_type_code, facil_group), fill = fuel_type_code, color = fuel_type_code)) +  
+  labs(y="Fuel Types Used", x="Facility Type", title = "Mosaic Plot of Fuel Type Usage by Facility Type") +
+  scale_y_discrete(guide=guide_axis(n.dodge=3))
+ 
+
+mosaic_fueltype + theme(axis.text.x = element_text(size = 7, angle = 90)) + theme(
+  axis.text.y = element_text(size = 6, angle = 45, hjust = 1)
+  )
+
 
 ```
 
