@@ -11,6 +11,9 @@ knitr::opts_chunk$set(echo = TRUE)
 library(flexdashboard)
 library(tidyverse)
 library(dplyr)
+library(ggplot2)
+library(ggmosaic)
+library(wesanderson)
 
 setwd(("C:/Users/12147/Dropbox/PC/Documents/RPrograming_Anderson/GroupProj_RPro"))
 altfuel <- read_csv("data/Alternative_Fueling_Stations.csv") 
@@ -36,7 +39,15 @@ altfuel_larger <- left_join(altfuel, combine_fueltype, by = "facility_type")
 You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}
-plot(pressure)
+
+mosaic_fueltype <- ggplot(data = altfuel_larger) +
+  geom_mosaic(aes(x = product(fuel_type_code, facil_group), fill = fuel_type_code)) +   
+  labs(y="Fuel Types Used", x="Facility Type", title = "Mosaic Plot of Fuel Type by Facility Type") +
+  scale_y_discrete(guide=guide_axis(n.dodge=3))
+
+mosaic_fueltype + theme(axis.text.x = element_text(angle = 90)) + theme(
+  axis.text.y = element_text(size = 6, angle = 45, hjust = 1)
+  )
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
