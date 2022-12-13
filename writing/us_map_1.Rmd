@@ -29,7 +29,7 @@ library(rnaturalearthdata)
 library(sf)
 library(forcats)
 
-altfuel <- read_csv("../data/Alternative_Fueling_Stations.csv")  
+altfuel <- read_csv("data/Alternative_Fueling_Stations.csv") 
 
 altfuel <- altfuel %>%
   mutate(fuel_type_code=fct_recode(.f = fuel_type_code,
@@ -55,7 +55,27 @@ fuelmap <- ggplot(data = world) +
     guides(colour = guide_legend(override.aes = list(size=5))) +
     scale_color_discrete("Fuel Type") +
     theme_few()
-fuelmap  
+fuelmap   
+
+
+colorado <- altfuel%>%
+  filter(state=="CO")  
+
+co_counties<-counties("Colorado", cb = TRUE)
+
+fuelmapCO <- ggplot(data = world) +
+    geom_sf() +
+    geom_sf(data = states, fill = NA) +
+    geom_sf(data=co_counties, fill = NA) +
+    geom_point(data = colorado, aes(x = X, y = Y, col=fuel_type_code), size = 2) +
+    coord_sf(xlim = c(-109.5, -101.5), ylim = c(36.5, 41.5), expand = FALSE) + 
+    labs(title= "Alternative Fuel Stations in Colorado", 
+         x=element_blank(), y=element_blank()) + 
+    guides(colour = guide_legend(override.aes = list(size=5))) +
+    scale_color_discrete("Fuel Type") +
+    theme_few()  
+
+fuelmapCO
 
 ```
 
