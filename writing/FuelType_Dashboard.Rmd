@@ -12,8 +12,26 @@ library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(ggmosaic)
-library(wesanderson)
-
+library(readr)
+library(tigris)  
+library(plotly)  
+library(maps)  
+library(ggthemes)  
+library(maptools)
+library(scales) 
+library(cowplot)
+library(googleway) 
+library(ggrepel)
+library(ggspatial)
+library(rnaturalearth) 
+library(rnaturalearthdata) 
+library(sf)
+library(forcats)
+library(tidyquant)
+library(dygraphs)
+library(lubridate)
+library(xts)
+library(gapminder)
 
 
 setwd(("C:/Users/12147/Dropbox/PC/Documents/RPrograming_Anderson/GroupProj_RPro"))
@@ -25,36 +43,149 @@ combine_fueltype <- read_csv("data/COMBINE_RPRO.csv")
 fuel_type_total <- altfuel$facility_type 
 
 ```
-
-#Introduction 
-
 Our data is the Alternative Fueling Stations data from the US Department of Transportation. This data has been compiled for users to analyze the distribution and other characteristics of various types of fueling stations across the United States. Understanding distributions and patterns within this data may give some indication of the popularity of certain fuel types and trends in industrial usage of each type over time. 
 
-
-Column {data-width=500}
+Column {data-width=600}
 -----------------------------------------------------------------------
 
-### Chart A - Distribution of Fueling Stations Across the United States 
+### Chart A - Station Openings by Fuel Type, Time Series Maps
 
 ```{r}
+alt_fuel <- altfuel %>% 
+  filter(!is.na(fuel_type_code)) %>% 
+  filter(!is.na(open_date))
+alt_fuel$open_date <- as.Date(alt_fuel$open_date, "%Y/%m/%d %H:%M:%S")
+class(alt_fuel$open_date)
+min(alt_fuel$open_date)
+max(alt_fuel$open_date)
+
+alt_fuel %>% 
+  group_by(fuel_type_code) %>% 
+  count()
+
+cng_total <- alt_fuel %>% 
+  mutate(open_date = year(open_date)) %>% 
+  filter(fuel_type_code == "CNG") %>% 
+  group_by(open_date, fuel_type_code) %>% 
+  count() 
+bd_total <- alt_fuel %>% 
+  mutate(open_date = year(open_date)) %>% 
+  filter(fuel_type_code == "BD") %>% 
+  group_by(open_date, fuel_type_code) %>% 
+  count() 
+e85_total <- alt_fuel %>% 
+  mutate(open_date = year(open_date)) %>% 
+  filter(fuel_type_code == "E85") %>% 
+  group_by(open_date, fuel_type_code) %>% 
+  count() 
+elec_total <- alt_fuel %>% 
+  mutate(open_date = year(open_date)) %>% 
+  filter(fuel_type_code == "ELEC") %>% 
+  group_by(open_date, fuel_type_code) %>% 
+  count() 
+HY_total <- alt_fuel %>% 
+  mutate(open_date = year(open_date)) %>% 
+  filter(fuel_type_code == "HY") %>% 
+  group_by(open_date, fuel_type_code) %>% 
+  count() 
+LNG_total <- alt_fuel %>% 
+  mutate(open_date = year(open_date)) %>% 
+  filter(fuel_type_code == "LNG") %>% 
+  group_by(open_date, fuel_type_code) %>% 
+  count() 
+lpg_total <- alt_fuel %>% 
+  mutate(open_date = year(open_date)) %>% 
+  filter(fuel_type_code == "LPG") %>% 
+  group_by(open_date, fuel_type_code) %>% 
+  count() 
+
+fig1 <- plot_ly(lpg_total, type = 'scatter', mode = 'none', fill = 'tonexty', fillcolor = 'rgba(176,224,230, .5)')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'LPG', fillcolor = 'rgba(176,224,230, .5)')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = ""), yaxis = list(range = c(0,600), title = 'Total Stations'))
+fig1
+fig2 <- plot_ly(bd_total, type = 'scatter', mode = 'none', fill = 'tonexty')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'BD', fillcolor = 'rgba(25,25,112, .5)')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = ""), yaxis = list(range = c(0,600), title = ""))
+fig3 <- plot_ly(cng_total, type = 'scatter', mode = 'none', fill = 'tonexty', fillcolor = 'rgba(0, 0, 255, 0.74)')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'CNG', fillcolor = 'rgba(0, 0, 255, 0.74)')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = ""), yaxis = list(range = c(0,200), title = ""))
+fig4 <- plot_ly(HY_total, type = 'scatter', mode = 'none', fill = 'tonexty') %>%
+  add_trace(x = ~open_date, y = ~n, name = 'HY', fillcolor = 'rgba(102,205,170, .5)')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = ""), yaxis = list(range = c(0,25), title = 'Total Stations'))
+fig5 <- plot_ly(LNG_total, type = 'scatter', mode = 'none', fill = 'tonexty')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'LNG', fillcolor = '	rgba(221,160,221, .5)')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = 'Year Opened'), yaxis = list(range = c(0,25), title = ""))
+fig6 <- plot_ly(elec_total, type = 'scatter', mode = 'none', fill = 'tonexty')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'ELEC', fill = 'tonexty', fillcolor = 'rgba(83, 2, 151, 0.74)')%>%
+  layout(legend=list(title=list(text='Fuel')), xaxis = list(title = 'Year Opened'), yaxis = list(title = ""))
+fig7 <- plot_ly(e85_total, type = 'scatter', mode = 'none', fill = 'tonexty')%>%
+  add_trace(x = ~open_date, y = ~n, name = 'E85', fillcolor = 'rgba(30,144,255, .5)')%>%
+  layout(legend=list(title=list(text='Fuel Type')), xaxis = list(title = 'Year Opened'), yaxis = list(range = c(0,500), title = 'Total Stations'))
+
+fig_total <- subplot(fig1, fig2, fig3, fig4, fig5, fig6, fig7, nrows = 3, titleX = TRUE, titleY =TRUE)
+fig_total
 
 
 ```
 
-Column {data-width=500}
+Column {data-width=400}
 -----------------------------------------------------------------------
 
-### Chart B - Station Openings by Fuel Type, Time Series Map 
+### Chart B - Distribution of Fueling Stations Across the United States
 
-```{r}
+```{r, fig.width = 13, fig.height=6}
+
+altfuel <- altfuel %>%
+  mutate(fuel_type_code=fct_recode(.f = fuel_type_code,
+                                   "Biodiesel"= "BD",
+                                   "Compressed Natural Gas" = "CNG",
+                                   "Electric" = "ELEC",
+                                   "Ethanol" = "E85",
+                                   "Hydrogen" = "HY",
+                                   "Liquefied Natural Gas"= "LNG",
+                                   "Propane" = "LPG"))
+
+world <- ne_countries(scale = "medium", returnclass = "sf")   
+states <- st_as_sf(map("state", plot = FALSE, fill = TRUE))  
 
 
+fuelmap <- ggplot(data = world) +
+    geom_sf() +
+    geom_sf(data = states, fill = NA) +
+    geom_point(data = altfuel, aes(x = X, y = Y, col=fuel_type_code), size = 0.8) +
+    coord_sf(xlim = c(-130, -65), ylim = c(23, 52), expand = FALSE) + 
+    labs(title= "Alternative Fuel Stations in the United States", subtitle= "Contiguous 48", 
+         x=element_blank(), y=element_blank()) + 
+    guides(colour = guide_legend(override.aes = list(size=5))) +
+    scale_color_discrete("Fuel Type") +
+    theme_few()
+fuelmap   
+
+
+colorado <- altfuel%>%
+  filter(state=="CO")  
+
+co_counties<-counties("Colorado", cb = TRUE)
+
+fuelmapCO <- ggplot(data = world) +
+    geom_sf() +
+    geom_sf(data = states, fill = NA) +
+    geom_sf(data=co_counties, fill = NA) +
+    geom_point(data = colorado, aes(x = X, y = Y, col=fuel_type_code), size = 2) +
+    coord_sf(xlim = c(-109.5, -101.5), ylim = c(36.5, 41.5), expand = FALSE) + 
+    labs(title= "Alternative Fuel Stations in Colorado", 
+         x=element_blank(), y=element_blank()) + 
+    guides(colour = guide_legend(override.aes = list(size=5))) +
+    scale_color_discrete("Fuel Type") +
+    theme_few()  
+
+fuelmapCO
 
 ```
 
 ### Chart C - Industrial uses of Fueling Facilities by Fuel Types, Mosaic Plot
 
-```{r,  fig.width = 14, fig.height=6}
+```{r,  fig.width = 13, fig.height= 7}
 altfuel_larger <- left_join(altfuel, combine_fueltype, by = "facility_type")
 
 mosaic_fueltype <- ggplot(data = altfuel_larger) +
