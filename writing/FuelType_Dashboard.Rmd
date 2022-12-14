@@ -55,13 +55,8 @@ alt_fuel <- altfuel %>%
   filter(!is.na(fuel_type_code)) %>% 
   filter(!is.na(open_date))
 alt_fuel$open_date <- as.Date(alt_fuel$open_date, "%Y/%m/%d %H:%M:%S")
-class(alt_fuel$open_date)
-min(alt_fuel$open_date)
-max(alt_fuel$open_date)
 
-alt_fuel %>% 
-  group_by(fuel_type_code) %>% 
-  count()
+
 
 cng_total <- alt_fuel %>% 
   mutate(open_date = year(open_date)) %>% 
@@ -102,7 +97,7 @@ lpg_total <- alt_fuel %>%
 fig1 <- plot_ly(lpg_total, type = 'scatter', mode = 'none', fill = 'tonexty', fillcolor = 'rgba(176,224,230, .5)')%>%
   add_trace(x = ~open_date, y = ~n, name = 'LPG', fillcolor = 'rgba(176,224,230, .5)')%>%
   layout(legend=list(title=list(text='Fuel')), xaxis = list(title = ""), yaxis = list(range = c(0,600), title = 'Total Stations'))
-fig1
+
 fig2 <- plot_ly(bd_total, type = 'scatter', mode = 'none', fill = 'tonexty')%>%
   add_trace(x = ~open_date, y = ~n, name = 'BD', fillcolor = 'rgba(25,25,112, .5)')%>%
   layout(legend=list(title=list(text='Fuel')), xaxis = list(title = ""), yaxis = list(range = c(0,600), title = ""))
@@ -188,10 +183,21 @@ fuelmapCO
 ```{r,  fig.width = 13, fig.height= 7}
 altfuel_larger <- left_join(altfuel, combine_fueltype, by = "facility_type")
 
+altfuel <- altfuel %>%
+  mutate(fuel_type_code=fct_recode(.f = fuel_type_code,
+                                   "Biodiesel"= "BD",
+                                   "Compressed Natural Gas" = "CNG",
+                                   "Electric" = "ELEC",
+                                   "Ethanol" = "E85",
+                                   "Hydrogen" = "HY",
+                                   "Liquefied Natural Gas"= "LNG",
+                                   "Propane" = "LPG"))
+
 mosaic_fueltype <- ggplot(data = altfuel_larger) +
   geom_mosaic(aes(x = product(fuel_type_code, facil_group), fill = fuel_type_code, color = fuel_type_code)) +  
   labs(y="Fuel Types Used", x="Facility Type", title = "Mosaic Plot of Fuel Type Usage by Facility Type") +
-  scale_y_discrete(guide=guide_axis(n.dodge=3))
+  scale_y_discrete(guide=guide_axis(n.dodge=3)) +
+  scale_color_discrete("Fuel Type")
  
 
 mosaic_fueltype + theme(axis.text.x = element_text(size = 7, angle = 90)) + theme(
